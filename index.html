@@ -129,19 +129,26 @@
 
     let current = 0;
     let score = 0;
+    const quizDiv = document.getElementById("quiz");
 
     function loadQuestion() {
       const q = quizData[current];
-      const quizDiv = document.getElementById("quiz");
       quizDiv.innerHTML = `
         <div class="question">
           <p><strong>Q${current + 1}:</strong> ${q.question}</p>
           ${q.choices.map((c, i) =>
-            `<button onclick="answer(${i})">${c}</button>`
+            `<button class="choice-btn" data-index="${i}">${c}</button>`
           ).join("<br>")}
         </div>
         <div id="explanation"></div>
       `;
+
+      document.querySelectorAll(".choice-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+          const choice = parseInt(e.target.getAttribute("data-index"));
+          answer(choice);
+        });
+      });
     }
 
     function answer(choice) {
@@ -153,22 +160,30 @@
         <div class="explanation">
           ${isCorrect ? '✅ 正解！' : '❌ 不正解。'}<br>
           <strong>解説：</strong>${q.explanation}<br>
-          <button onclick="nextQuestion()">次へ</button>
+          <button id="next-btn">次へ</button>
         </div>
       `;
-      // ボタンを無効に
-      const buttons = document.querySelectorAll("#quiz button");
-      buttons.forEach(btn => btn.disabled = true);
+
+      // ボタンを無効にする
+      document.querySelectorAll(".choice-btn").forEach(btn => {
+        btn.disabled = true;
+      });
+
+      // 次へボタンにイベントを追加
+      document.getElementById("next-btn").addEventListener("click", nextQuestion);
     }
 
     function nextQuestion() {
       current++;
-      if (current < quizData.length) loadQuestion();
-      else showResult();
+      if (current < quizData.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
     }
 
     function showResult() {
-      document.getElementById("quiz").style.display = "none";
+      quizDiv.style.display = "none";
       document.getElementById("result").innerHTML = `
         ✅ クイズ終了！<br>
         正解数：${score} / ${quizData.length}<br><br>
@@ -211,6 +226,7 @@
       });
     }
 
+    // 最初の問題を表示
     loadQuestion();
   </script>
 </body>
