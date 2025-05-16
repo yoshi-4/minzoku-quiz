@@ -10,6 +10,7 @@
     button { margin-top: 10px; margin-right: 5px; }
     .feedback { margin-top: 20px; }
     .feedback button { padding: 8px 16px; }
+    .explanation { margin-top: 10px; font-style: italic; }
   </style>
 </head>
 <body>
@@ -31,7 +32,8 @@
           "同化政策による文化喪失と差別",
           "自治権の保障と教育支援"
         ],
-        correct: 1
+        correct: 1,
+        explanation: "明治期以降、アイヌは日本の同化政策により伝統文化や言語を失い、差別を受けてきました。"
       },
       {
         question: "琉球王国が日本に併合された後、沖縄の人々が経験した主な影響は何ですか？",
@@ -40,7 +42,8 @@
           "言語や文化の抑圧と軍事利用の増加",
           "移民の自由と経済支援"
         ],
-        correct: 1
+        correct: 1,
+        explanation: "沖縄の併合後、日本政府は標準語教育を強制し、独自文化は抑圧されました。"
       },
       {
         question: "多民族・多文化共生社会を築く上で、アイヌ民族の権利回復が象徴するものは何ですか？",
@@ -49,7 +52,8 @@
           "先住民族の尊厳と文化の尊重",
           "地方経済の合理化"
         ],
-        correct: 1
+        correct: 1,
+        explanation: "先住民族の権利を守ることは、多文化共生社会の実現に向けた重要な一歩です。"
       },
       {
         question: "2019年に成立した「アイヌ施策推進法」の主な目的は何ですか？",
@@ -58,7 +62,8 @@
           "アイヌ文化の観光資源化のみを推進",
           "アイヌを先住民族と明記し、文化振興や地域共生を進める"
         ],
-        correct: 2
+        correct: 2,
+        explanation: "この法律は、アイヌを先住民族と認め文化振興・共生社会の実現を目指します。"
       },
       {
         question: "アイヌ文化が長年忘れられた背景として、主にどのような社会的要因がありましたか？",
@@ -67,7 +72,8 @@
           "公的な教育機関での排除と同化の圧力",
           "宗教的な禁止と国外追放"
         ],
-        correct: 1
+        correct: 1,
+        explanation: "教育や政策によりアイヌ文化は長年排除され、記録も乏しくなりました。"
       },
       {
         question: "沖縄に米軍基地が集中する理由の一つとして、歴史的に重要なのは？",
@@ -76,7 +82,8 @@
           "戦後の米軍占領政策の影響と返還交渉の結果",
           "自然資源が豊富で経済活動が少ないから"
         ],
-        correct: 1
+        correct: 1,
+        explanation: "戦後、沖縄は長く米軍の統治下に置かれ、そのまま基地が集中しました。"
       },
       {
         question: "なぜアイヌ語の復興は文化的に重要とされているのでしょうか？",
@@ -85,7 +92,8 @@
           "言語が文化の記憶や価値観を伝える基盤だから",
           "現代日本語と類似しているから"
         ],
-        correct: 1
+        correct: 1,
+        explanation: "言語は文化と深く結びついており、アイヌ語の復興は民族の尊厳にも関わります。"
       },
       {
         question: "日本における多民族理解教育の課題は何ですか？",
@@ -94,7 +102,8 @@
           "歴史的背景の省略と誤認識の広がり",
           "国際法との整合性が高すぎること"
         ],
-        correct: 1
+        correct: 1,
+        explanation: "学校教育では民族の歴史が簡略化され、理解が不十分になりがちです。"
       },
       {
         question: "近年、アイヌ民族の文化が再評価されている理由の一つは？",
@@ -103,7 +112,8 @@
           "国内外で先住民族の権利が重視されているから",
           "言語的に中国語に似ているから"
         ],
-        correct: 1
+        correct: 1,
+        explanation: "国際的に先住民族の権利が認められつつあり、日本でも再評価が進んでいます。"
       },
       {
         question: "民族的マイノリティへの理解を深めることの意義とは？",
@@ -112,7 +122,8 @@
           "経済格差を助長するため",
           "教育制度の均一化を図るため"
         ],
-        correct: 0
+        correct: 0,
+        explanation: "多様性を理解することで、社会全体が持続可能で公平になります。"
       }
     ];
 
@@ -129,11 +140,28 @@
             `<button onclick="answer(${i})">${c}</button>`
           ).join("<br>")}
         </div>
+        <div id="explanation"></div>
       `;
     }
 
     function answer(choice) {
-      if (choice === quizData[current].correct) score++;
+      const q = quizData[current];
+      const explanationDiv = document.getElementById("explanation");
+      const isCorrect = choice === q.correct;
+      if (isCorrect) score++;
+      explanationDiv.innerHTML = `
+        <div class="explanation">
+          ${isCorrect ? '✅ 正解！' : '❌ 不正解。'}<br>
+          <strong>解説：</strong>${q.explanation}<br>
+          <button onclick="nextQuestion()">次へ</button>
+        </div>
+      `;
+      // ボタンを無効に
+      const buttons = document.querySelectorAll("#quiz button");
+      buttons.forEach(btn => btn.disabled = true);
+    }
+
+    function nextQuestion() {
       current++;
       if (current < quizData.length) loadQuestion();
       else showResult();
