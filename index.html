@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>みんぞくクエスト - 日本の民族クイズ</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+    .question { margin-bottom: 20px; }
+    .result { margin-top: 30px; font-weight: bold; }
+    button { margin-top: 10px; margin-right: 5px; }
+    .feedback { margin-top: 20px; }
+    .feedback button { padding: 8px 16px; }
+  </style>
+</head>
+<body>
+  <h1>🧠 みんぞくクエスト</h1>
+  <p>クイズ形式で日本の民族の歴史や現在の課題について深く学びましょう。<br>最後に、どれだけ理解できたかをフィードバックしてください。</p>
+
+  <div id="quiz"></div>
+  <div class="result" id="result"></div>
+  <div class="feedback" id="feedback"></div>
+  <div id="chart-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const quizData = [
+      {
+        question: "アイヌ民族が日本の近代化政策の中で直面した主な課題は何でしたか？",
+        choices: [
+          "土地の自由な使用と文化支援",
+          "同化政策による文化喪失と差別",
+          "自治権の保障と教育支援"
+        ],
+        correct: 1
+      },
+      {
+        question: "琉球王国が日本に併合された後、沖縄の人々が経験した主な影響は何ですか？",
+        choices: [
+          "独自文化の保護と観光振興",
+          "言語や文化の抑圧と軍事利用の増加",
+          "移民の自由と経済支援"
+        ],
+        correct: 1
+      },
+      {
+        question: "多民族・多文化共生社会を築く上で、アイヌ民族の権利回復が象徴するものは何ですか？",
+        choices: [
+          "国家の統一性強化",
+          "先住民族の尊厳と文化の尊重",
+          "地方経済の合理化"
+        ],
+        correct: 1
+      },
+      {
+        question: "2019年に成立した「アイヌ施策推進法」の主な目的は何ですか？",
+        choices: [
+          "アイヌ語の廃止と標準語の普及",
+          "アイヌ文化の観光資源化のみを推進",
+          "アイヌを先住民族と明記し、文化振興や地域共生を進める"
+        ],
+        correct: 2
+      },
+      {
+        question: "アイヌ文化が長年忘れられた背景として、主にどのような社会的要因がありましたか？",
+        choices: [
+          "過度な保護政策と独立化の支援",
+          "公的な教育機関での排除と同化の圧力",
+          "宗教的な禁止と国外追放"
+        ],
+        correct: 1
+      },
+      {
+        question: "沖縄に米軍基地が集中する理由の一つとして、歴史的に重要なのは？",
+        choices: [
+          "地理的に本土よりも東京に近いから",
+          "戦後の米軍占領政策の影響と返還交渉の結果",
+          "自然資源が豊富で経済活動が少ないから"
+        ],
+        correct: 1
+      },
+      {
+        question: "なぜアイヌ語の復興は文化的に重要とされているのでしょうか？",
+        choices: [
+          "観光客へのアピールのため",
+          "言語が文化の記憶や価値観を伝える基盤だから",
+          "現代日本語と類似しているから"
+        ],
+        correct: 1
+      },
+      {
+        question: "日本における多民族理解教育の課題は何ですか？",
+        choices: [
+          "教科書の情報量が多すぎること",
+          "歴史的背景の省略と誤認識の広がり",
+          "国際法との整合性が高すぎること"
+        ],
+        correct: 1
+      },
+      {
+        question: "近年、アイヌ民族の文化が再評価されている理由の一つは？",
+        choices: [
+          "伝統舞踊がYouTubeで人気になったから",
+          "国内外で先住民族の権利が重視されているから",
+          "言語的に中国語に似ているから"
+        ],
+        correct: 1
+      },
+      {
+        question: "民族的マイノリティへの理解を深めることの意義とは？",
+        choices: [
+          "文化の多様性を尊重し、社会の包摂性を高めるため",
+          "経済格差を助長するため",
+          "教育制度の均一化を図るため"
+        ],
+        correct: 0
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const q = quizData[current];
+      const quizDiv = document.getElementById("quiz");
+      quizDiv.innerHTML = `
+        <div class="question">
+          <p><strong>Q${current + 1}:</strong> ${q.question}</p>
+          ${q.choices.map((c, i) =>
+            `<button onclick="answer(${i})">${c}</button>`
+          ).join("<br>")}
+        </div>
+      `;
+    }
+
+    function answer(choice) {
+      if (choice === quizData[current].correct) score++;
+      current++;
+      if (current < quizData.length) loadQuestion();
+      else showResult();
+    }
+
+    function showResult() {
+      document.getElementById("quiz").style.display = "none";
+      document.getElementById("result").innerHTML = `
+        ✅ クイズ終了！<br>
+        正解数：${score} / ${quizData.length}<br><br>
+        このクイズを通じてどれくらい理解が深まりましたか？（1:全く理解できなかった〜5:よく理解できた）<br>
+      `;
+      document.getElementById("feedback").innerHTML = [1, 2, 3, 4, 5].map(level =>
+        `<button onclick="submitFeedback(${level})">${level}</button>`
+      ).join(" ");
+    }
+
+    let feedbackData = [];
+
+    function submitFeedback(level) {
+      feedbackData.push(level);
+      document.getElementById("feedback").innerHTML = `ご協力ありがとうございました！`;
+      renderChart();
+    }
+
+    function renderChart() {
+      const container = document.getElementById("chart-container");
+      container.innerHTML = `<canvas id="feedbackChart" width="400" height="200"></canvas>`;
+      const ctx = document.getElementById("feedbackChart").getContext("2d");
+      const counts = [1, 2, 3, 4, 5].map(lvl => feedbackData.filter(x => x === lvl).length);
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['1', '2', '3', '4', '5'],
+          datasets: [{
+            label: '理解度フィードバック件数',
+            data: counts,
+            backgroundColor: 'rgba(75, 192, 192, 0.6)'
+          }]
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
