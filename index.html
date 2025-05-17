@@ -1,208 +1,222 @@
-import React, { useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-} from 'chart.js';
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-const quizData = [
-  {
-    question: "アイヌ民族が日本の近代化政策の中で直面した主な課題は何でしたか？",
-    choices: [
-      "土地の自由な使用と文化支援",
-      "同化政策による文化喪失と差別",
-      "自治権の保障と教育支援"
-    ],
-    correct: 1,
-    explanation: "明治期以降、アイヌは日本の同化政策により伝統文化や言語を失い、差別を受けてきました。"
-  },
-  {
-    question: "琉球王国が日本に併合された後、沖縄の人々が経験した主な影響は何ですか？",
-    choices: [
-      "独自文化の保護と観光振興",
-      "言語や文化の抑圧と軍事利用の増加",
-      "移民の自由と経済支援"
-    ],
-    correct: 1,
-    explanation: "沖縄の併合後、日本政府は標準語教育を強制し、独自文化は抑圧されました。"
-  },
-  {
-    question: "多民族・多文化共生社会を築く上で、アイヌ民族の権利回復が象徴するものは何ですか？",
-    choices: [
-      "国家の統一性強化",
-      "先住民族の尊厳と文化の尊重",
-      "地方経済の合理化"
-    ],
-    correct: 1,
-    explanation: "先住民族の権利を守ることは、多文化共生社会の実現に向けた重要な一歩です。"
-  },
-  {
-    question: "2019年に成立した「アイヌ施策推進法」の主な目的は何ですか？",
-    choices: [
-      "アイヌ語の廃止と標準語の普及",
-      "アイヌ文化の観光資源化のみを推進",
-      "アイヌを先住民族と明記し、文化振興や地域共生を進める"
-    ],
-    correct: 2,
-    explanation: "この法律は、アイヌを先住民族と認め文化振興・共生社会の実現を目指します。"
-  },
-  {
-    question: "アイヌ文化が長年忘れられた背景として、主にどのような社会的要因がありましたか？",
-    choices: [
-      "過度な保護政策と独立化の支援",
-      "公的な教育機関での排除と同化の圧力",
-      "宗教的な禁止と国外追放"
-    ],
-    correct: 1,
-    explanation: "教育や政策によりアイヌ文化は長年排除され、記録も乏しくなりました。"
-  },
-  {
-    question: "沖縄に米軍基地が集中する理由の一つとして、歴史的に重要なのは？",
-    choices: [
-      "地理的に本土よりも東京に近いから",
-      "戦後の米軍占領政策の影響と返還交渉の結果",
-      "自然資源が豊富で経済活動が少ないから"
-    ],
-    correct: 1,
-    explanation: "戦後、沖縄は長く米軍の統治下に置かれ、そのまま基地が集中しました。"
-  },
-  {
-    question: "なぜアイヌ語の復興は文化的に重要とされているのでしょうか？",
-    choices: [
-      "観光客へのアピールのため",
-      "言語が文化の記憶や価値観を伝える基盤だから",
-      "現代日本語と類似しているから"
-    ],
-    correct: 1,
-    explanation: "言語は文化と深く結びついており、アイヌ語の復興は民族の尊厳にも関わります。"
-  },
-  {
-    question: "日本における多民族理解教育の課題は何ですか？",
-    choices: [
-      "教科書の情報量が多すぎること",
-      "歴史的背景の省略と誤認識の広がり",
-      "国際法との整合性が高すぎること"
-    ],
-    correct: 1,
-    explanation: "学校教育では民族の歴史が簡略化され、理解が不十分になりがちです。"
-  },
-  {
-    question: "近年、アイヌ民族の文化が再評価されている理由の一つは？",
-    choices: [
-      "伝統舞踊がYouTubeで人気になったから",
-      "国内外で先住民族の権利が重視されているから",
-      "言語的に中国語に似ているから"
-    ],
-    correct: 1,
-    explanation: "国際的に先住民族の権利が認められつつあり、日本でも再評価が進んでいます。"
-  },
-  {
-    question: "民族的マイノリティへの理解を深めることの意義とは？",
-    choices: [
-      "文化の多様性を尊重し、社会の包摂性を高めるため",
-      "経済格差を助長するため",
-      "教育制度の均一化を図るため"
-    ],
-    correct: 0,
-    explanation: "多様性を理解することで、社会全体が持続可能で公平になります。"
-  }
-];
-
-export default function QuizApp() {
-  const [current, setCurrent] = useState(0);
-  const [score, setScore] = useState(0);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState<number[]>([]);
-
-  const handleAnswer = (index: number) => {
-    if (showExplanation) return;
-    setSelectedChoice(index);
-    if (index === quizData[current].correct) {
-      setScore(score + 1);
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>みんぞくクエスト - 日本の民族クイズ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+      line-height: 1.6;
     }
-    setShowExplanation(true);
-  };
 
-  const next = () => {
-    setShowExplanation(false);
-    setSelectedChoice(null);
-    setCurrent(current + 1);
-  };
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 10px;
+    }
 
-  const handleFeedback = (level: number) => {
-    setFeedback([...feedback, level]);
-  };
+    p {
+      font-size: 1em;
+      margin-bottom: 20px;
+    }
 
-  const renderChart = () => {
-    const counts = [1, 2, 3, 4, 5].map(level =>
-      feedback.filter(x => x === level).length
-    );
+    .question {
+      margin-bottom: 20px;
+    }
 
-    const data = {
-      labels: ['1', '2', '3', '4', '5'],
-      datasets: [{
-        label: '理解度フィードバック件数',
-        data: counts,
-        backgroundColor: 'rgba(75, 192, 192, 0.6)'
-      }]
-    };
+    .result {
+      margin-top: 30px;
+      font-weight: bold;
+    }
 
-    return <Bar data={data} options={{ responsive: true, scales: { y: { beginAtZero: true } } }} />;
-  };
+    button {
+      margin-top: 10px;
+      margin-right: 5px;
+      padding: 12px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background-color: #007BFF;
+      color: #fff;
+      cursor: pointer;
+    }
 
-  if (current >= quizData.length) {
-    return (
-      <div style={{ padding: 20 }}>
-        <h2>✅ クイズ終了！</h2>
-        <p>正解数：{score} / {quizData.length}</p>
-        {feedback.length === 0 ? (
-          <div>
-            <p>このクイズを通じてどれくらい理解が深まりましたか？（1〜5）</p>
-            {[1, 2, 3, 4, 5].map(level => (
-              <button key={level} onClick={() => handleFeedback(level)} style={{ marginRight: 10 }}>{level}</button>
-            ))}
-          </div>
-        ) : (
-          <>
-            <p>ご協力ありがとうございました！</p>
-            {renderChart()}
-          </>
-        )}
-      </div>
-    );
-  }
+    button:hover {
+      background-color: #0056b3;
+    }
 
-  const q = quizData[current];
+    .feedback {
+      margin-top: 20px;
+    }
 
-  return (
-    <div style={{ padding: 20 }}>
-      <h2>🧠 みんぞくクエスト</h2>
-      <p><strong>Q{current + 1}:</strong> {q.question}</p>
-      {q.choices.map((choice, index) => (
-        <button
-          key={index}
-          onClick={() => handleAnswer(index)}
-          disabled={showExplanation}
-          style={{ display: 'block', marginTop: 10 }}
-        >
-          {choice}
-        </button>
-      ))}
-      {showExplanation && (
-        <div style={{ marginTop: 20, fontStyle: 'italic' }}>
-          <p>{selectedChoice === q.correct ? "✅ 正解！" : "❌ 不正解。"}</p>
-          <p><strong>解説：</strong>{q.explanation}</p>
-          <button onClick={next} style={{ marginTop: 10 }}>次へ</button>
+    .feedback button {
+      padding: 10px 18px;
+      font-size: 1em;
+    }
+
+    .explanation {
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+
+      p {
+        font-size: 0.95em;
+      }
+
+      button {
+        width: 100%;
+        margin: 10px 0;
+        font-size: 1em;
+        padding: 14px;
+      }
+
+      .feedback button {
+        width: 18%;
+        margin: 5px 1%;
+        font-size: 1em;
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 みんぞくクエスト</h1>
+  <p>クイズ形式で日本の民族の歴史や現在の課題について深く学びましょう。<br>最後に、どれだけ理解できたかをフィードバックしてください。</p>
+
+  <div id="quiz"></div>
+  <div class="result" id="result"></div>
+  <div class="feedback" id="feedback"></div>
+  <div id="chart-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const quizData = [
+      {
+        question: "アイヌ民族が日本の近代化政策の中で直面した主な課題は何でしたか？",
+        choices: [
+          "土地の自由な使用と文化支援",
+          "同化政策による文化喪失と差別",
+          "自治権の保障と教育支援"
+        ],
+        correct: 1,
+        explanation: "明治期以降、アイヌは日本の同化政策により伝統文化や言語を失い、差別を受けてきました。"
+      },
+      {
+        question: "琉球王国が日本に併合された後、沖縄の人々が経験した主な影響は何ですか？",
+        choices: [
+          "独自文化の保護と観光振興",
+          "言語や文化の抑圧と軍事利用の増加",
+          "移民の自由と経済支援"
+        ],
+        correct: 1,
+        explanation: "沖縄の併合後、日本政府は標準語教育を強制し、独自文化は抑圧されました。"
+      },
+      {
+        question: "多民族・多文化共生社会を築く上で、アイヌ民族の権利回復が象徴するものは何ですか？",
+        choices: [
+          "国家の統一性強化",
+          "先住民族の尊厳と文化の尊重",
+          "地方経済の合理化"
+        ],
+        correct: 1,
+        explanation: "先住民族の権利を守ることは、多文化共生社会の実現に向けた重要な一歩です。"
+      },
+      {
+        question: "2019年に成立した「アイヌ施策推進法」の主な目的は何ですか？",
+        choices: [
+          "アイヌ語の廃止と標準語の普及",
+          "アイヌ文化の観光資源化のみを推進",
+          "アイヌを先住民族と明記し、文化振興や地域共生を進める"
+        ],
+        correct: 2,
+        explanation: "この法律は、アイヌを先住民族と認め文化振興・共生社会の実現を目指します。"
+      },
+      {
+        question: "アイヌ文化が長年忘れられた背景として、主にどのような社会的要因がありましたか？",
+        choices: [
+          "過度な保護政策と独立化の支援",
+          "公的な教育機関での排除と同化の圧力",
+          "宗教的な禁止と国外追放"
+        ],
+        correct: 1,
+        explanation: "教育や政策によりアイヌ文化は長年排除され、記録も乏しくなりました。"
+      },
+      {
+        question: "沖縄に米軍基地が集中する理由の一つとして、歴史的に重要なのは？",
+        choices: [
+          "地理的に本土よりも東京に近いから",
+          "戦後の米軍占領政策の影響と返還交渉の結果",
+          "自然資源が豊富で経済活動が少ないから"
+        ],
+        correct: 1,
+        explanation: "戦後、沖縄は長く米軍の統治下に置かれ、そのまま基地が集中しました。"
+      },
+      {
+        question: "なぜアイヌ語の復興は文化的に重要とされているのでしょうか？",
+        choices: [
+          "観光客へのアピールのため",
+          "言語が文化の記憶や価値観を伝える基盤だから",
+          "現代日本語と類似しているから"
+        ],
+        correct: 1,
+        explanation: "言語は文化と深く結びついており、アイヌ語の復興は民族の尊厳にも関わります。"
+      },
+      {
+        question: "日本における多民族理解教育の課題は何ですか？",
+        choices: [
+          "教科書の情報量が多すぎること",
+          "歴史的背景の省略と誤認識の広がり",
+          "国際法との整合性が高すぎること"
+        ],
+        correct: 1,
+        explanation: "学校教育では民族の歴史が簡略化され、理解が不十分になりがちです。"
+      },
+      {
+        question: "近年、アイヌ民族の文化が再評価されている理由の一つは？",
+        choices: [
+          "伝統舞踊がYouTubeで人気になったから",
+          "国内外で先住民族の権利が重視されているから",
+          "言語的に中国語に似ているから"
+        ],
+        correct: 1,
+        explanation: "国際的に先住民族の権利が認められつつあり、日本でも再評価が進んでいます。"
+      },
+      {
+        question: "民族的マイノリティへの理解を深めることの意義とは？",
+        choices: [
+          "文化の多様性を尊重し、社会の包摂性を高めるため",
+          "経済格差を助長するため",
+          "教育制度の均一化を図るため"
+        ],
+        correct: 0,
+        explanation: "多様性を理解することで、社会全体が持続可能で公平になります。"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    const quizDiv = document.getElementById("quiz");
+
+    function loadQuestion() {
+      const q = quizData[current];
+      quizDiv.innerHTML = `
+        <div class="question">
+          <p><strong>Q${current + 1}:</strong> ${q.question}</p>
+          ${q.choices.map((c, i) =>
+            `<button class="choice-btn" data-index="${i}">${c}</button>`
+          ).join("<br>")}
         </div>
-      )}
-    </div>
-  );
-}
+        <div id="
+::contentReference[oaicite:31]{index=31}
