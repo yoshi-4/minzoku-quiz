@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>みんぞくクエスト - 日本の民族クイズ</title>
   <style>
-    body {
+     body {
       font-family: 'Noto Sans JP', sans-serif;
       padding: 20px;
       background: #f9f9f9;
@@ -102,7 +102,7 @@
         font-size: 0.9em;
         padding: 8px 16px;
       }
-    }
+    } 
   </style>
 </head>
 <body>
@@ -181,8 +181,7 @@
         choices: ["文化の多様性を尊重し、社会の包摂性を高めるため", "経済格差を助長するため", "教育制度の均一化を図るため"],
         correct: 0,
         explanation: "多様性を理解することで、社会全体が持続可能で公平になります。"
-      }
-    ];
+      }]; 
 
     let current = 0;
     const ratings = [];
@@ -241,18 +240,19 @@
           });
         });
       });
-
-      document.getElementById("quiz").addEventListener("click", function (e) {
-        if (e.target.id === "next-btn") {
-          current++;
-          if (current < quizData.length) {
-            loadQuestion();
-          } else {
-            showResult();
-          }
-        }
-      });
     }
+
+    // ← このイベントリスナーは loadQuestion 外に配置
+    document.getElementById("quiz").addEventListener("click", function (e) {
+      if (e.target.id === "next-btn") {
+        current++;
+        if (current < quizData.length) {
+          loadQuestion();
+        } else {
+          showResult();
+        }
+      }
+    });
 
     function showResult() {
       document.getElementById("quiz").style.display = "none";
